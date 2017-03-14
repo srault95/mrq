@@ -7,7 +7,7 @@ docker_py27:
 	docker build -t $(IMAGE):$(PY_RELEASE) tests/DockerfileTestPY2
 
 docker_py34:
-	docker build -t $(IMAGE):$(PY_RELEASE) tests/DockerfileTestPY3
+	docker build -t $(IMAGE):$(PY_RELEASE) -f tests/DockerfileTestPY3
 
 docker: docker_$(PY_RELEASE)
 
