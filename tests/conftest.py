@@ -26,10 +26,11 @@ from mrq.config import get_config
 from mrq.utils import wait_for_net_service
 from mrq.context import connections, set_current_config, get_current_config
 
-#mongodb_jobs
-#redis
+curent_config = get_config(sources=("env"))
+curent_config["mongodb_jobs"] = "mongodb://mongodb/mrq_test"
+curent_config["redis"] = "redis://redis:6379"
 
-set_current_config(get_config(sources=("env")))
+set_current_config(curent_config) #get_config(sources=("env")))
 
 os.system("rm -rf dump.rdb")
 
