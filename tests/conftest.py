@@ -135,8 +135,8 @@ class WorkerFixture(ProcessFixture):
     def __init__(self, request, **kwargs):
         ProcessFixture.__init__(self, request, cmdline=kwargs.get("cmdline"))
 
-        #self.fixture_mongodb = kwargs["mongodb"]
-        #self.fixture_redis = kwargs["redis"]
+        self.fixture_mongodb = kwargs["mongodb"]
+        self.fixture_redis = kwargs["redis"]
 
         self.started = False
 
@@ -152,7 +152,7 @@ class WorkerFixture(ProcessFixture):
         if m:
             processes = int(m.group(1))
 
-        cmdline = "python mrq/bin/mrq_worker.py --mongodb_logs_size 0 %s %s %s %s" % (
+        cmdline = "python mrq/bin/mrq_worker.py --redis redis://redis:6379 --mongodb_jobs mongodb://mongo/mrq_test --mongodb_logs 1 --mongodb_logs_size 0 %s %s %s %s" % (
             "--admin_port 20020" if (processes <= 1) else "",
             "--trace_io --trace_greenlets" if trace else "",
             kwargs.get("flags", ""),
@@ -178,9 +178,9 @@ class WorkerFixture(ProcessFixture):
         self.mongodb_logs = connections.mongodb_logs
         self.redis = connections.redis
 
-        #if flush:
-        #    self.fixture_mongodb.flush()
-        #    self.fixture_redis.flush()
+        if flush:
+            self.fixture_mongodb.flush()
+            self.fixture_redis.flush()
 
     def stop(self, deps=True, sig=2, **kwargs):
 
@@ -240,7 +240,7 @@ class WorkerFixture(ProcessFixture):
 
     def send_task_cli(self, path, params, queue=None, **kwargs):
 
-        cli = ["python", "mrq/bin/mrq_run.py", "--quiet"]
+        cli = ["python", "mrq/bin/mrq_run.py", "--quiet", "-redis", "redis://redis:6379", "--mongodb_jobs", "mongodb://mongo/mrq_test", "--mongodb_logs", "1"]
         if queue:
             cli += ["--queue", queue]
         cli += [path, json.dumps(params)]
@@ -307,9 +307,9 @@ def redis(request):
 
 
 @pytest.fixture(scope="function")
-def worker(request): #, mongodb, redis
+def worker(request, mongodb, redis):
 
-    return WorkerFixture(request)#, mongodb=mongodb, redis=redis)
+    return WorkerFixture(request, mongodb=mongodb, redis=redis)
 
 
 @pytest.fixture(scope="function")
