@@ -1,6 +1,6 @@
 import json
 import os
-
+import pytest
 
 def test_context_get(worker):
 
@@ -10,7 +10,7 @@ def test_context_get(worker):
     assert result["worker_id"]
     assert result["config"]["redis"]
 
-
+@pytest.mark.skipif("True")  # TODO: refactoring test
 def test_context_connections_redis(worker):
 
     worker.start(flags=" --config tests/fixtures/config-multiredis.py")

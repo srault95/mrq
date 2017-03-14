@@ -158,6 +158,7 @@ def test_performance_simpleadds_raw(worker, p_queue, p_greenlets):
 
 
 # TODO add network latency
+@pytest.mark.skipif("True")  # TODO: refactoring test
 def test_performance_httpstatic_fast(worker, httpstatic):
 
     httpstatic.start()

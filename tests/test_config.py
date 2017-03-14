@@ -1,7 +1,7 @@
 import json
 import pytest
 
-@pytest.mark.skipif("True")  # TODO: config refactoring
+@pytest.mark.skipif("True")  # TODO: refactoring config
 def test_config(worker):
     """ Test different config passing options. """
 
