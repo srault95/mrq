@@ -1,0 +1,79 @@
+
+version: '2'
+
+services:
+
+    nginx-proxy:
+      image: jwilder/nginx-proxy
+      ports:
+       - "443:443"
+      volumes:
+       - './volumes/nginx/ssl:/etc/nginx/certs:ro'
+       - './volumes/nginx/vhost.d:/etc/nginx/vhost.d'
+       - '/var/run/docker.sock:/tmp/docker.sock:ro'
+
+    letsencrypt-nginx-proxy-companion:
+      image: jrcs/letsencrypt-nginx-proxy-companion
+      volumes_from:
+       - nginx-proxy
+      volumes:
+       - './volumes/nginx/ssl:/etc/nginx/certs:rw'
+       - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    
+    redis:
+      image: redis:3-alpine
+      command: redis-server --appendonly yes
+      volumes:
+        - ./redis/data:/data
+      mem_limit: 1g
+
+    mongodb:
+      image: mongo:latest
+      command: mongod --noauth --storageEngine wiredTiger --wiredTigerDirectoryForIndexes --directoryperdb
+      volumes:
+        - ./mongodb/data:/data/db
+
+    worker:
+      build: 
+        context: .
+      command: mrq-worker
+      environment:
+        MRQ_TYPE: worker
+        MRQ_MONGO: mongodb://mongodb/mrq
+        MRQ_REDIS: redis://redis:6379
+      links:
+        - mongodb:mongodb
+        - redis:redis
+
+    dashboard:
+      build: 
+        context: .
+      command: mrq-dashboard
+      environment:
+        MRQ_TYPE: dashboard
+        MRQ_MONGO: mongodb://mongodb/mrq
+        MRQ_REDIS: redis://redis:6379
+      links:
+        - mongodb:mongodb
+        - redis:redis
+      environment:
+        VIRTUAL_PORT: 8000
+        VIRTUAL_HOST: mrq.example.net
+        LETSENCRYPT_HOST: mrq.example.net
+        LETSENCRYPT_EMAIL: root@example.net
+
+    cli:
+      build: 
+        context: .
+      command: mrq-run
+      environment:
+        MRQ_TYPE: cli
+        MRQ_MONGO: mongodb://mongodb/mrq
+        MRQ_REDIS: redis://redis:6379
+      links:
+        - mongodb:mongodb
+        - redis:redis
+
+volumes:
+  - ./data:/mydata
+

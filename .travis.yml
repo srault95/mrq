@@ -4,16 +4,37 @@ services:
   - docker
 
 env:
-  - PYTHON_BIN=python
-  - PYTHON_BIN=python3
+  - PY_RELEASE=py34 MONGO_IMAGE=mongo:3.4 REDIS_IMAGE=redis:latest DOCKER_OPTIONS="-e USE_MONGO_SERVER=1 -e MRQ_MONGO=mongodb://mongodb/mrq_test --link=mongodb:mongodb -e MRQ_REDIS=redis://redis:6379 --link=redis:redis --rm"
+  - PY_RELEASE=py27 MONGO_IMAGE=mongo:3.4 REDIS_IMAGE=redis:latest DOCKER_OPTIONS="-e USE_MONGO_SERVER=1 -e MRQ_MONGO=mongodb://mongodb/mrq_test --link=mongodb:mongodb -e MRQ_REDIS=redis://redis:6379 --link=redis:redis --rm"
 
 before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install docker-engine
+  - docker pull $MONGO_IMAGE
+  - docker pull $REDIS_IMAGE
+  - docker run -d --name=mongodb $MONGO_IMAGE mongod --noauth 
+  - docker run -d --name=redis $REDIS_IMAGE redis-server --appendonly yes 
+  - make docker
+  - pip install coveralls
+
+before_script:
+  - sleep 15
+  - env
   - docker ps
   - docker info
   - docker version
-  - make docker
+  - docker run $DOCKER_OPTIONS mrq_local:$(PY_RELEASE) pip freeze
 
 # TODO: coveralls?
 script:
-  - docker run -i -t -v `pwd`:/app:rw -w /app mrq_local $PYTHON_BIN -m pylint --errors-only --init-hook="import sys; sys.path.append('.')" -d E1103 --rcfile .pylintrc mrq
-  - docker run -i -t -v `pwd`:/app:rw -w /app mrq_local $PYTHON_BIN -m pytest tests/ -v --junitxml=pytest-report.xml --cov mrq --cov-report term
+  - docker run $DOCKER_OPTIONS mrq_local:$(PY_RELEASE) pylint --errors-only --init-hook="import sys; sys.path.append('.')" -d E1103 --rcfile .pylintrc mrq
+  - docker run $DOCKER_OPTIONS -e COVERAGE_FILE=/coverage/.coverage -v $PWD/coverage:/coverage mrq_local:$(PY_RELEASE) py.test tests/ -v --junitxml=pytest-report.xml --cov mrq --cov-report term 
+  
+after_script: 
+  - COVERAGE_FILE=./coverage/.coverage coveralls --verbose
+  #- make clean
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always  
