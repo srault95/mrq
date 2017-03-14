@@ -8,6 +8,8 @@ from .version import VERSION
 from .utils import get_local_ip, DelimiterArgParser
 import atexit
 
+from decouple import config as config_env
+
 
 def add_parser_args(parser, config_type):
 
@@ -59,7 +61,7 @@ def add_parser_args(parser, config_type):
     parser.add_argument(
         '--mongodb_jobs', '--mongodb',
         action='store',
-        default="mongodb://127.0.0.1:27017/mrq",
+        default=config_env('MRQ_MONGO', "mongodb://127.0.0.1:27017/mrq"),
         help='MongoDB URI for the jobs, scheduled_jobs & workers database')
 
     parser.add_argument(
@@ -87,7 +89,7 @@ def add_parser_args(parser, config_type):
     parser.add_argument(
         '--redis',
         action='store',
-        default="redis://127.0.0.1:6379",
+        default=config_env('MRQ_REDIS', "redis://127.0.0.1:6379"),
         help='Redis URI')
 
     parser.add_argument(
