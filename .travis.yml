@@ -23,12 +23,12 @@ before_script:
   - docker ps
   - docker info
   - docker version
-  - docker run $DOCKER_OPTIONS mrq_local:$(PY_RELEASE) pip freeze
+  - docker run $DOCKER_OPTIONS mrq_local:$PY_RELEASE pip freeze
 
 # TODO: coveralls?
 script:
-  - docker run $DOCKER_OPTIONS mrq_local:$(PY_RELEASE) pylint --errors-only --init-hook="import sys; sys.path.append('.')" -d E1103 --rcfile .pylintrc mrq
-  - docker run $DOCKER_OPTIONS -e COVERAGE_FILE=/coverage/.coverage -v $PWD/coverage:/coverage mrq_local:$(PY_RELEASE) py.test tests/ -v --junitxml=pytest-report.xml --cov mrq --cov-report term 
+  - docker run $DOCKER_OPTIONS mrq_local:$PY_RELEASE pylint --errors-only --init-hook="import sys; sys.path.append('.')" -d E1103 --rcfile .pylintrc mrq
+  - docker run $DOCKER_OPTIONS -e COVERAGE_FILE=/coverage/.coverage -v $PWD/coverage:/coverage mrq_local:$PY_RELEASE py.test tests/ -v --junitxml=pytest-report.xml --cov mrq --cov-report term 
   
 after_script: 
   - COVERAGE_FILE=./coverage/.coverage coveralls --verbose
