@@ -24,13 +24,15 @@ from mrq.job import Job, queue_raw_jobs, queue_jobs
 from mrq.queue import Queue
 from mrq.config import get_config
 from mrq.utils import wait_for_net_service
-from mrq.context import connections, set_current_config
+from mrq.context import connections, set_current_config, get_current_config
 
 
 set_current_config(get_config(sources=("env")))
 
 os.system("rm -rf dump.rdb")
 
+from pprint import pprint
+pprint(get_current_config())
 
 class ProcessFixture(object):
 
