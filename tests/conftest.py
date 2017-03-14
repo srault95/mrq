@@ -152,7 +152,8 @@ class WorkerFixture(ProcessFixture):
         if m:
             processes = int(m.group(1))
 
-        cmdline = "python mrq/bin/mrq_worker.py --redis redis://redis:6379 --mongodb_jobs mongodb://mongo/mrq_test --mongodb_logs 1 --mongodb_logs_size 0 %s %s %s %s" % (
+        #--redis redis://redis:6379 --mongodb_jobs mongodb://mongo/mrq_test --mongodb_logs 1 
+        cmdline = "python mrq/bin/mrq_worker.py --mongodb_logs_size 0 %s %s %s %s" % (
             "--admin_port 20020" if (processes <= 1) else "",
             "--trace_io --trace_greenlets" if trace else "",
             kwargs.get("flags", ""),
@@ -240,7 +241,7 @@ class WorkerFixture(ProcessFixture):
 
     def send_task_cli(self, path, params, queue=None, **kwargs):
 
-        cli = ["python", "mrq/bin/mrq_run.py", "--quiet", "-redis", "redis://redis:6379", "--mongodb_jobs", "mongodb://mongo/mrq_test", "--mongodb_logs", "1"]
+        cli = ["python", "mrq/bin/mrq_run.py", "--quiet"]#, "--redis", "redis://redis:6379", "--mongodb_jobs", "mongodb://mongo/mrq_test", "--mongodb_logs", "1"]
         if queue:
             cli += ["--queue", queue]
         cli += [path, json.dumps(params)]
