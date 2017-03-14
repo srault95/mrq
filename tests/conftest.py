@@ -163,8 +163,8 @@ class WorkerFixture(ProcessFixture):
 
     def start_deps(self, flush=True):
 
-        self.fixture_mongodb.start()
-        self.fixture_redis.start()
+        #self.fixture_mongodb.start()
+        #self.fixture_redis.start()
 
         # Will auto-connect
         connections.reset()
@@ -173,9 +173,9 @@ class WorkerFixture(ProcessFixture):
         self.mongodb_logs = connections.mongodb_logs
         self.redis = connections.redis
 
-        if flush:
-            self.fixture_mongodb.flush()
-            self.fixture_redis.flush()
+        #if flush:
+        #    self.fixture_mongodb.flush()
+        #    self.fixture_redis.flush()
 
     def stop(self, deps=True, sig=2, **kwargs):
 
@@ -186,8 +186,9 @@ class WorkerFixture(ProcessFixture):
             self.stop_deps(**kwargs)
 
     def stop_deps(self, **kwargs):
-        self.fixture_mongodb.stop(sig=2, **kwargs)
-        self.fixture_redis.stop(sig=2, **kwargs)
+        pass
+        #self.fixture_mongodb.stop(sig=2, **kwargs)
+        #self.fixture_redis.stop(sig=2, **kwargs)
 
     def wait_for_tasks_results(self, job_ids, block=True, accept_statuses=["success"]):
 
@@ -301,9 +302,9 @@ def redis(request):
 
 
 @pytest.fixture(scope="function")
-def worker(request, mongodb, redis):
+def worker(request): #, mongodb, redis
 
-    return WorkerFixture(request, mongodb=mongodb, redis=redis)
+    return WorkerFixture(request)#, mongodb=mongodb, redis=redis)
 
 
 @pytest.fixture(scope="function")
