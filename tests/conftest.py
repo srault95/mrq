@@ -31,9 +31,6 @@ current_config = get_current_config()
 
 os.system("rm -rf dump.rdb")
 
-from pprint import pprint
-pprint(get_config(sources=("env")))
-
 class ProcessFixture(object):
 
     def __init__(self, request, cmdline=None, wait_port=None, quiet=False):
