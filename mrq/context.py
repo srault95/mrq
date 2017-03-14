@@ -147,7 +147,11 @@ def _connections_factory(attr):
             elif config_obj == "0":
                 return None
 
-            from pymongo import MongoClient
+            import os
+            if os.environ.get('USE_MONGO_SERVER', '0') == "1":
+                from mongomock import MongoClient
+            else:
+                from pymongo import MongoClient
 
             mongo_parsed = pymongo.uri_parser.parse_uri(config_obj)
 
