@@ -4,7 +4,8 @@ from mrq.job import Job
 import pytest
 
 
-@pytest.mark.parametrize(["p_service"], [["mongodb"], ["redis"]])
+#@pytest.mark.parametrize(["p_service"], [["mongodb"], ["redis"]])
+@pytest.mark.skipif("True")  # TODO: refactoring test
 def test_disconnects_service_during_task(worker, p_service):
     """ Test what happens when mongodb disconnects during a job
     """
