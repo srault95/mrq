@@ -33,21 +33,18 @@ RUN apt-get update && \
 RUN pip install --upgrade --ignore-installed pip
 RUN pip3 install --upgrade --ignore-installed pip
 
-ADD requirements-heroku.txt /app/requirements-heroku.txt
-ADD requirements-base.txt /app/requirements-base.txt
-ADD requirements-dev.txt /app/requirements-dev.txt
-ADD requirements-dashboard.txt /app/requirements-dashboard.txt
+ADD requirements /app/
 
-RUN pip3 install -r /app/requirements-heroku.txt && \
-	pip3 install -r /app/requirements-base.txt && \
-	pip3 install -r /app/requirements-dev.txt && \
-	pip3 install -r /app/requirements-dashboard.txt && \
+RUN pip3 install -r /app/requirements/heroku.txt && \
+	pip3 install -r /app/requirements/base.txt && \
+	pip3 install -r /app/requirements/dev.txt && \
+	pip3 install -r /app/requirements/dashboard.txt && \
 	rm -rf ~/.cache
 
-RUN pip install -r /app/requirements-heroku.txt && \
-	pip install -r /app/requirements-base.txt && \
-	pip install -r /app/requirements-dev.txt && \
-	pip install -r /app/requirements-dashboard.txt && \
+RUN pip install -r /app/requirements/heroku.txt && \
+	pip install -r /app/requirements/base.txt && \
+	pip install -r /app/requirements/dev.txt && \
+	pip install -r /app/requirements/dashboard.txt && \
 	rm -rf ~/.cache
 
 RUN mkdir -p /data/db

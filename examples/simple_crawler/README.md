@@ -13,7 +13,7 @@ Then install MRQ and the packages needed for this example:
 ```
 $ cd examples/simple_crawler
 $ sudo apt-get install libxml2-dev libxslt1-dev libz-dev     # Needed for lxml
-$ pip install -r requirements.txt
+$ pip install -r requirements/prod.txt
 ```
 
 Launch MongoDB & Redis if they are not already started:
