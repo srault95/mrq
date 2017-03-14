@@ -130,8 +130,8 @@ class WorkerFixture(ProcessFixture):
     def __init__(self, request, **kwargs):
         ProcessFixture.__init__(self, request, cmdline=kwargs.get("cmdline"))
 
-        self.fixture_mongodb = kwargs["mongodb"]
-        self.fixture_redis = kwargs["redis"]
+        #self.fixture_mongodb = kwargs["mongodb"]
+        #self.fixture_redis = kwargs["redis"]
 
         self.started = False
 
